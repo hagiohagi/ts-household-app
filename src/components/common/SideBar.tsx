@@ -1,7 +1,7 @@
-import { Box,Divider,Drawer,List,ListItem,ListItemButton,ListItemIcon,ListItemText,Toolbar } from "@mui/material";
+import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from "@mui/material";
 import React, { CSSProperties } from "react";
-// import InboxIcon from "@mui/icons-material/MoveToInbox";
-// import MailIcon from "@mui/icons-material/Mail";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
 import HomeIcon from "@mui/icons-material/Home";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import { NavLink } from "react-router-dom";
@@ -28,12 +28,12 @@ const SideBar = ({
     { text: "Report", path: "/report", icon: EqualizerIcon },
   ];
 
-  const baseLinkStyle:CSSProperties = {
+  const baseLinkStyle: CSSProperties = {
     textDecoration: "none",
     color: "inherit",
     display: "block",
   };
-  const activeLinkStyle:CSSProperties = {
+  const activeLinkStyle: CSSProperties = {
     backgroundColor: "rgba(0,0,0,0.08)",
   };
 
@@ -43,7 +43,7 @@ const SideBar = ({
       <Divider />
       <List>
         {MenuItems.map((item, index) => (
-          <NavLink key={item.text} to={item.path} style={({isActive}) => {
+          <NavLink key={item.text} to={item.path} style={({ isActive }) => {
             return {
               ...baseLinkStyle,
               ...(isActive ? activeLinkStyle : {})
@@ -67,7 +67,7 @@ const SideBar = ({
   return (
     <Box
       component="nav"
-      sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+      sx={{ width: { md: drawerWidth }, flexShrink: { sm: 0 } }}
       aria-label="mailbox folders"
     >
       {/* モバイル用 */}
@@ -77,7 +77,7 @@ const SideBar = ({
         // onTransitionEnd={handleDrawerTransitionEnd}
         onClose={handleDrawerToggle}
         sx={{
-          display: { xs: "block", sm: "none" },
+          display: { xs: "block", md: "none" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
@@ -95,7 +95,7 @@ const SideBar = ({
       <Drawer
         variant="permanent"
         sx={{
-          display: { xs: "none", sm: "block" },
+          display: { xs: "none", md: "block" },
           "& .MuiDrawer-paper": {
             boxSizing: "border-box",
             width: drawerWidth,
