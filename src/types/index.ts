@@ -11,3 +11,9 @@ export interface Transaction {
   category: IncomeCategory | ExpenseCategory,
   date: string,
 }
+
+export interface Balance {
+  income: number,
+  expense: number,
+  balance: number,
+}
