@@ -20,15 +20,20 @@ import TrainIcon from '@mui/icons-material/Train'
 import WorkIcon from '@mui/icons-material/Work'
 import AddBusinessIcon from '@mui/icons-material/AddBusiness'
 import SavingsIcon from '@mui/icons-material/Savings'
-import { Controller, useForm } from "react-hook-form";
-import { ExpenseCategory, IncomeCategory } from "../../types";
+import { Controller, SubmitHandler, useForm } from "react-hook-form";
+import { ExpenseCategory, IncomeCategory, Transaction } from "../../types";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { transactionSchema } from "../../validations/schema";
+import { Schema, transactionSchema } from "../../validations/schema";
 
 interface TransactionFormProps {
   onCloseForm: () => void;
   isEntryDrawerOpen: boolean
   currentDay: string
+  onSaveTransaction: (transaction: Schema) => Promise<void>
+  onDeleteTransaction: (transactionId: string) => Promise<void>
+  onUpdateTransaction: (Transaction: Schema, transactionId: string) => Promise<void>
+  selectedTransaction: Transaction | null
+  setSelectedTransaction: React.Dispatch<React.SetStateAction<Transaction | null>>
 }
 interface CategoryItem {
   label: IncomeCategory | ExpenseCategory;
@@ -37,8 +42,8 @@ interface CategoryItem {
 
 type incomeExpense = "income" | "expense"
 
-const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay }: TransactionFormProps) => {
-  const { control, setValue, watch, formState: { errors }, handleSubmit } = useForm({
+const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTransaction, onDeleteTransaction, onUpdateTransaction, selectedTransaction, setSelectedTransaction }: TransactionFormProps) => {
+  const { control, setValue, watch, formState: { errors }, handleSubmit, reset } = useForm<Schema>({
     defaultValues: {
       type: "expense" as "income" | "expense",
       date: currentDay,
@@ -48,6 +53,7 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay }: Transac
     },
     resolver: zodResolver(transactionSchema),
   });
+
   const formWidth = 320;
   const expenseCategories: CategoryItem[] = [
     { label: "食費", icon: <FastfoodIcon fontSize='small' /> },
@@ -62,8 +68,10 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay }: Transac
     { label: "副収入", icon: <AddBusinessIcon fontSize='small' /> },
     { label: "お小遣い", icon: <SavingsIcon fontSize='small' /> },
   ]
+  //収支タイプを切り替える関数
   const incomeExpenseToggle = (type: incomeExpense) => {
     setValue("type", type);
+    setValue("category", "");
   };
   const [categories, setCategories] = useState(expenseCategories)
   //収支タイプを監視
@@ -76,8 +84,57 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay }: Transac
     setValue("date", currentDay)
   }, [currentDay]);
 
-  const onSubmit = (data: any) => {
+  const onSubmit: SubmitHandler<Schema> = (data) => {
+    if (selectedTransaction) {
+      onUpdateTransaction(data, selectedTransaction.id).then(() => {
+        setSelectedTransaction(null);
+      }).catch((error) => {
+        console.error(error);
+      })
+    } else {
+      onSaveTransaction(data).then(() => {
 
+      }).catch((error) => {
+        console.error(error);
+      })
+    }
+    reset({
+      type: "expense",
+      date: currentDay,
+      amount: 0,
+      category: "" as "" | "食費" | "日用品" | "住居費" | "交際費" | "娯楽" | "交通費" | "給与" | "副収入" | "お小遣い",
+      content: "",
+    });
+  };
+  useEffect(() => {
+    //選択肢が更新されたか確認
+    if (selectedTransaction) {
+      const categoryExists = categories.some((category) => category.label === selectedTransaction.category);
+      setValue("category", categoryExists ? selectedTransaction.category : "");
+    }
+  }, [selectedTransaction, categories])
+  useEffect(() => {
+    if (selectedTransaction) {
+      setValue("type", selectedTransaction.type);
+      setValue("date", selectedTransaction.date);
+      setValue("amount", selectedTransaction.amount);
+      setValue("content", selectedTransaction.content);
+    } else {
+      reset({
+        type: "expense",
+        date: currentDay,
+        amount: 0,
+        category: "" as "" | "食費" | "日用品" | "住居費" | "交際費" | "娯楽" | "交通費" | "給与" | "副収入" | "お小遣い",
+        content: "",
+      });
+    }
+  }, [selectedTransaction])
+
+  const handleDelete = () => {
+    if (selectedTransaction) {
+      onDeleteTransaction(selectedTransaction.id)
+      setSelectedTransaction(null);
+    }
   }
   return (
     <Box
@@ -206,8 +263,14 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay }: Transac
             )} />
           {/* 保存ボタン */}
           <Button type="submit" variant="contained" color={currentType === "income" ? "primary" : "error"} fullWidth>
-            保存
+            {selectedTransaction ? "更新" : "保存"}
           </Button>
+          {selectedTransaction && (
+            <Button onClick={handleDelete} variant="outlined" color={"secondary"} fullWidth>
+              削除
+            </Button>
+          )}
+
         </Stack >
       </Box >
     </Box >
