@@ -4,7 +4,7 @@ import dayGridPlugin from '@fullcalendar/daygrid'
 import jaLocale from '@fullcalendar/core/locales/ja'
 import "../../calendar.css"
 import { DatesSetArg, EventContentArg } from '@fullcalendar/core'
-import { calculateDaylyBalances } from '../../utils/financeCalculation'
+import { calculateDailyBalances } from '../../utils/financeCalculation'
 import { Balance, CalendarContent, Transaction } from '../../types'
 import { formatCurrency } from '../../utils/formatting'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
@@ -48,10 +48,10 @@ const Calender = ({ monthlyTransactions, setCurrentMonth, currentDay, setCurrent
     )
   }
 
-  const dailyBalances = calculateDaylyBalances(monthlyTransactions);
+  const dailyBalances = calculateDailyBalances(monthlyTransactions);
 
-  const createCalendarEvents = (daylyBalances: Record<string, Balance>): CalendarContent[] => {
-    return Object.keys(daylyBalances).map((date) => {
+  const createCalendarEvents = (dailyBalances: Record<string, Balance>): CalendarContent[] => {
+    return Object.keys(dailyBalances).map((date) => {
       const { income, expense, balance } = dailyBalances[date];
       return {
         start: date,

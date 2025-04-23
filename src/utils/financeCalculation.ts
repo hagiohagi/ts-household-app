@@ -13,7 +13,7 @@ export function financeCalculations(transactions: Transaction[]): Balance {
 }
 
 // 日付ごとの収支を計算する
-export function calculateDaylyBalances(transactions: Transaction[]): Record<string, Balance> {
+export function calculateDailyBalances(transactions: Transaction[]): Record<string, Balance> {
   return transactions.reduce<Record<string, Balance>>((acc, transaction) => {
     const day = transaction.date;
     if (!acc[day]) {
