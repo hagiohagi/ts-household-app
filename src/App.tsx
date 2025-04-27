@@ -72,12 +72,15 @@ function App() {
       }
     }
   };
-  const handleDeleteTransaction = async (transactionId: string) => {
+  const handleDeleteTransaction = async (transactionIds: string | readonly string[]) => {
     //fireStoreのデータ削除
     try {
-      await deleteDoc(doc(db, "Transactions", transactionId));
-      const filteredTransaction = transactions.filter((transaction) => transaction.id !== transactionId);
-      setTransactions(filteredTransaction);
+      const idsToDelete = Array.isArray(transactionIds) ? transactionIds : [transactionIds];
+      for (const id of idsToDelete) {
+        await deleteDoc(doc(db, "Transactions", id));
+        const filteredTransaction = transactions.filter((transaction) => !idsToDelete.includes(transaction.id));
+        setTransactions(filteredTransaction);
+      }
     } catch (err) {
       if (isFireStoreError(err)) {
         console.error("FireStoreのエラーは:", err)
@@ -86,13 +89,13 @@ function App() {
       }
     }
   };
-  const handleUpdateTransaction = async (transaction: Schema, transactionId: string) => {
+  const handleUpdateTransaction = async (transaction: Schema, transactionIds: string) => {
     try {
       //fireStore更新処理
-      const docRef = doc(db, "Transactions", transactionId);
+      const docRef = doc(db, "Transactions", transactionIds);
       await updateDoc(docRef, transaction);
       //画面更新
-      const updatedTransactions = transactions.map((t) => t.id === transactionId ? { ...t, ...transaction } : t) as Transaction[]
+      const updatedTransactions = transactions.map((t) => t.id === transactionIds ? { ...t, ...transaction } : t) as Transaction[]
       setTransactions(updatedTransactions);
     } catch (err) {
       if (isFireStoreError(err)) {
@@ -127,6 +130,7 @@ function App() {
                   setCurrentMonth={setCurrentMonth}
                   monthlyTransactions={monthlyTransactions}
                   isLoading={isLoading}
+                  onDeleteTransaction={handleDeleteTransaction}
                 />
               }
             />
