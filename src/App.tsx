@@ -14,131 +14,106 @@ import { db } from "./firebase";
 import { format } from "date-fns";
 import { formatMonth } from "./utils/formatting";
 import { Schema } from "./validations/schema";
+import { AppContextProvider } from "./context/AppContext";
+import { isFireStoreError } from "./utils/errorHandling";
 
 function App() {
-  // FireStoreErrorかどうか判定する型ガード
-  function isFireStoreError(err: unknown): err is { code: string, message: string } {
-    return typeof err === "object" && err !== null && "code" in err
-  };
 
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [currentMonth, setCurrentMonth] = useState(new Date());
-  const [isLoading, setIsLoading] = useState(true);
+  // const [transactions, setTransactions] = useState<Transaction[]>([]);
+  // const [currentMonth, setCurrentMonth] = useState(new Date());
+  // const [isLoading, setIsLoading] = useState(true);
 
-  // firestoreのデータを全て取得
-  useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "Transactions"))
-        const transactionsData = querySnapshot.docs.map((doc) => {
-          return {
-            ...doc.data(),
-            id: doc.id,
-          } as Transaction
-        })
-        setTransactions(transactionsData);
-      } catch (err) {
-        if (isFireStoreError(err)) {
-          console.error("FireStoreのエラーは:", err)
-        } else {
-          console.error("一般的なエラーは:", err)
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchTransactions();
-  }, [])
-
-  // 一月分のデータのみを取得
-  const monthlyTransactions = transactions.filter((transactions) => {
-    return transactions.date.startsWith(formatMonth(currentMonth));
-  })
+  // // FireStoreErrorかどうか判定する型ガード
+  // function isFireStoreError(err: unknown): err is { code: string, message: string } {
+  //   return typeof err === "object" && err !== null && "code" in err
+  // };
 
   //取引を保存する処理
-  const handleSaveTransaction = async (transaction: Schema) => {
-    try {
-      const docRef = await addDoc(collection(db, "Transactions"), transaction);
-      const newTransaction = {
-        id: docRef.id,
-        ...transaction
-      } as Transaction;
-      setTransactions((prevTransaction) => [...prevTransaction, newTransaction]);
-    } catch (err) {
-      if (isFireStoreError(err)) {
-        console.error("FireStoreのエラーは:", err)
-      } else {
-        console.error("一般的なエラーは:", err)
-      }
-    }
-  };
-  const handleDeleteTransaction = async (transactionIds: string | readonly string[]) => {
-    //fireStoreのデータ削除
-    try {
-      const idsToDelete = Array.isArray(transactionIds) ? transactionIds : [transactionIds];
-      for (const id of idsToDelete) {
-        await deleteDoc(doc(db, "Transactions", id));
-        const filteredTransaction = transactions.filter((transaction) => !idsToDelete.includes(transaction.id));
-        setTransactions(filteredTransaction);
-      }
-    } catch (err) {
-      if (isFireStoreError(err)) {
-        console.error("FireStoreのエラーは:", err)
-      } else {
-        console.error("一般的なエラーは:", err)
-      }
-    }
-  };
-  const handleUpdateTransaction = async (transaction: Schema, transactionIds: string) => {
-    try {
-      //fireStore更新処理
-      const docRef = doc(db, "Transactions", transactionIds);
-      await updateDoc(docRef, transaction);
-      //画面更新
-      const updatedTransactions = transactions.map((t) => t.id === transactionIds ? { ...t, ...transaction } : t) as Transaction[]
-      setTransactions(updatedTransactions);
-    } catch (err) {
-      if (isFireStoreError(err)) {
-        console.error("FireStoreのエラーは:", err)
-      } else {
-        console.error("一般的なエラーは:", err)
-      }
-    }
-  }
+  // const handleSaveTransaction = async (transaction: Schema) => {
+  //   try {
+  //     const docRef = await addDoc(collection(db, "Transactions"), transaction);
+  //     const newTransaction = {
+  //       id: docRef.id,
+  //       ...transaction
+  //     } as Transaction;
+  //     setTransactions((prevTransaction) => [...prevTransaction, newTransaction]);
+  //   } catch (err) {
+  //     if (isFireStoreError(err)) {
+  //       console.error("FireStoreのエラーは:", err)
+  //     } else {
+  //       console.error("一般的なエラーは:", err)
+  //     }
+  //   }
+  // };
+  // const handleDeleteTransaction = async (transactionIds: string | readonly string[]) => {
+  //   //fireStoreのデータ削除
+  //   try {
+  //     const idsToDelete = Array.isArray(transactionIds) ? transactionIds : [transactionIds];
+  //     for (const id of idsToDelete) {
+  //       await deleteDoc(doc(db, "Transactions", id));
+  //       const filteredTransaction = transactions.filter((transaction) => !idsToDelete.includes(transaction.id));
+  //       setTransactions(filteredTransaction);
+  //     }
+  //   } catch (err) {
+  //     if (isFireStoreError(err)) {
+  //       console.error("FireStoreのエラーは:", err)
+  //     } else {
+  //       console.error("一般的なエラーは:", err)
+  //     }
+  //   }
+  // };
+  // const handleUpdateTransaction = async (transaction: Schema, transactionIds: string) => {
+  //   try {
+  //     //fireStore更新処理
+  //     const docRef = doc(db, "Transactions", transactionIds);
+  //     await updateDoc(docRef, transaction);
+  //     //画面更新
+  //     const updatedTransactions = transactions.map((t) => t.id === transactionIds ? { ...t, ...transaction } : t) as Transaction[]
+  //     setTransactions(updatedTransactions);
+  //   } catch (err) {
+  //     if (isFireStoreError(err)) {
+  //       console.error("FireStoreのエラーは:", err)
+  //     } else {
+  //       console.error("一般的なエラーは:", err)
+  //     }
+  //   }
+  // }
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Router>
-        <Routes>
-          <Route path="/" element={<AppLayout />}>
-            <Route index element={
-              <Home
-                monthlyTransactions={monthlyTransactions}
-                setCurrentMonth={setCurrentMonth}
-                onSaveTransaction={handleSaveTransaction}
-                onDeleteTransaction={handleDeleteTransaction}
-                onUpdateTransaction={handleUpdateTransaction}
-              />
-            }
-            />
-            <Route
-              path="/report"
-              element={
-                <Report
-                  currentMonth={currentMonth}
-                  setCurrentMonth={setCurrentMonth}
-                  monthlyTransactions={monthlyTransactions}
-                  isLoading={isLoading}
-                  onDeleteTransaction={handleDeleteTransaction}
+    <AppContextProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Router>
+          <Routes>
+            <Route path="/" element={<AppLayout />}>
+              <Route index element={
+                <Home
+                // monthlyTransactions={monthlyTransactions}
+                // setCurrentMonth={setCurrentMonth}
+                // onSaveTransaction={handleSaveTransaction}
+                // onDeleteTransaction={handleDeleteTransaction}
+                // onUpdateTransaction={handleUpdateTransaction}
                 />
               }
-            />
-            <Route path="*" element={<NoMatch />} />
-          </Route>
-        </Routes>
-      </Router>
-    </ThemeProvider>
+              />
+              <Route
+                path="/report"
+                element={
+                  <Report
+                  //   currentMonth={currentMonth}
+                  //   setCurrentMonth={setCurrentMonth}
+                  //   monthlyTransactions={monthlyTransactions}
+                  //   isLoading={isLoading}
+                  //   onDeleteTransaction={handleDeleteTransaction}
+                  />
+                }
+              />
+              <Route path="*" element={<NoMatch />} />
+            </Route>
+          </Routes>
+        </Router>
+      </ThemeProvider>
+    </AppContextProvider>
   );
 }
 

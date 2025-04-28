@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   ButtonGroup,
+  Dialog,
+  DialogContent,
   IconButton,
   ListItemIcon,
   MenuItem,
@@ -9,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { JSX, useEffect, useState } from "react";
+import React, { JSX, useContext, useEffect, useState } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
 import AlarmIcon from '@mui/icons-material/Alarm'
@@ -24,16 +26,20 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ExpenseCategory, IncomeCategory, Transaction } from "../../types";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Schema, transactionSchema } from "../../validations/schema";
+import { AppContext, useAppContext } from "../../context/AppContext";
 
 interface TransactionFormProps {
   onCloseForm: () => void;
   isEntryDrawerOpen: boolean
   currentDay: string
-  onSaveTransaction: (transaction: Schema) => Promise<void>
-  onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
-  onUpdateTransaction: (Transaction: Schema, transactionId: string) => Promise<void>
+  // onSaveTransaction: (transaction: Schema) => Promise<void>
+  // onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>
+  // onUpdateTransaction: (Transaction: Schema, transactionId: string) => Promise<void>
   selectedTransaction: Transaction | null
   setSelectedTransaction: React.Dispatch<React.SetStateAction<Transaction | null>>
+  // isMobile: boolean;
+  isDialogOpen: boolean;
+  setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 interface CategoryItem {
   label: IncomeCategory | ExpenseCategory;
@@ -42,7 +48,19 @@ interface CategoryItem {
 
 type incomeExpense = "income" | "expense"
 
-const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTransaction, onDeleteTransaction, onUpdateTransaction, selectedTransaction, setSelectedTransaction }: TransactionFormProps) => {
+const TransactionForm = ({
+  onCloseForm,
+  isEntryDrawerOpen,
+  currentDay,
+  // onSaveTransaction,
+  // onDeleteTransaction,
+  // onUpdateTransaction,
+  selectedTransaction,
+  setSelectedTransaction,
+  // isMobile,
+  isDialogOpen,
+  setIsDialogOpen
+}: TransactionFormProps) => {
   const { control, setValue, watch, formState: { errors }, handleSubmit, reset } = useForm<Schema>({
     defaultValues: {
       type: "expense" as "income" | "expense",
@@ -53,6 +71,7 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTra
     },
     resolver: zodResolver(transactionSchema),
   });
+  const { isMobile, onSaveTransaction, onDeleteTransaction, onUpdateTransaction } = useAppContext();
 
   const formWidth = 320;
   const expenseCategories: CategoryItem[] = [
@@ -88,6 +107,9 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTra
     if (selectedTransaction) {
       onUpdateTransaction(data, selectedTransaction.id).then(() => {
         setSelectedTransaction(null);
+        if (isMobile) {
+          setIsDialogOpen(false);
+        }
       }).catch((error) => {
         console.error(error);
       })
@@ -134,28 +156,13 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTra
     if (selectedTransaction) {
       onDeleteTransaction(selectedTransaction.id)
       setSelectedTransaction(null);
+      if (isMobile) {
+        setIsDialogOpen(false);
+      }
     }
   }
-  return (
-    <Box
-      sx={{
-        position: "fixed",
-        top: 64,
-        right: isEntryDrawerOpen ? formWidth : "-2%", // フォームの位置を調整
-        width: formWidth,
-        height: "100%",
-        bgcolor: "background.paper",
-        zIndex: (theme) => theme.zIndex.drawer - 1,
-        transition: (theme) =>
-          theme.transitions.create("right", {
-            easing: theme.transitions.easing.sharp,
-            duration: theme.transitions.duration.enteringScreen,
-          }),
-        p: 2, // 内部の余白
-        boxSizing: "border-box", // ボーダーとパディングをwidthに含める
-        boxShadow: "0px 0px 15px -5px #777777",
-      }}
-    >
+  const formContent = (
+    <>
       {/* 入力エリアヘッダー */}
       < Box display={"flex"} justifyContent={"space-between"} mb={2} >
         <Typography variant="h6">入力</Typography>
@@ -273,7 +280,43 @@ const TransactionForm = ({ onCloseForm, isEntryDrawerOpen, currentDay, onSaveTra
 
         </Stack >
       </Box >
-    </Box >
+    </>
+  )
+  return (
+    <>
+      {isMobile ? (
+        //モバイル用
+        <Dialog open={isDialogOpen} onClose={onCloseForm} fullWidth maxWidth={"sm"}>
+          <DialogContent>
+            {formContent}
+          </DialogContent>
+        </Dialog>
+      ) : (
+        //PC用
+        <Box
+          sx={{
+            position: "fixed",
+            top: 64,
+            right: isEntryDrawerOpen ? formWidth : "-2%", // フォームの位置を調整
+            width: formWidth,
+            height: "100%",
+            bgcolor: "background.paper",
+            zIndex: (theme) => theme.zIndex.drawer - 1,
+            transition: (theme) =>
+              theme.transitions.create("right", {
+                easing: theme.transitions.easing.sharp,
+                duration: theme.transitions.duration.enteringScreen,
+              }),
+            p: 2, // 内部の余白
+            boxSizing: "border-box", // ボーダーとパディングをwidthに含める
+            boxShadow: "0px 0px 15px -5px #777777",
+          }}
+        >
+          {formContent}
+        </Box >
+      )}
+
+    </>
   );
 };
 export default TransactionForm;

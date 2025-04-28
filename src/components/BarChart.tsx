@@ -14,6 +14,8 @@ import { Bar } from 'react-chartjs-2';
 import { calculateDailyBalances } from '../utils/financeCalculation';
 import { Transaction } from '../types';
 import { Box, Typography, useTheme } from '@mui/material';
+import { useAppContext } from '../context/AppContext';
+import useMonthlyTransactions from '../hooks/useMonthlyTransactions';
 
 ChartJS.register(
   CategoryScale,
@@ -23,11 +25,15 @@ ChartJS.register(
   Tooltip,
   Legend
 );
-interface BarChartProps {
-  monthlyTransactions: Transaction[]
-  isLoading: boolean
-}
-const BarChart = ({ monthlyTransactions, isLoading }: BarChartProps) => {
+// interface BarChartProps {
+//   monthlyTransactions: Transaction[]
+//   isLoading: boolean
+// }
+const BarChart = (
+  // { monthlyTransactions, isLoading }: BarChartProps
+) => {
+  const { isLoading } = useAppContext();
+  const monthlyTransactions = useMonthlyTransactions();
   const theme = useTheme();
   const options = {
     maintainAspectRatio: false,

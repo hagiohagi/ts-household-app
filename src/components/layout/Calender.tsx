@@ -10,19 +10,29 @@ import { formatCurrency } from '../../utils/formatting'
 import interactionPlugin, { DateClickArg } from '@fullcalendar/interaction'
 import { useTheme } from '@mui/material'
 import { isSameMonth } from 'date-fns'
+import useMonthlyTransactions from '../../hooks/useMonthlyTransactions'
+import { useAppContext } from '../../context/AppContext'
 
 interface CalenderProps {
-  monthlyTransactions: Transaction[]
-  setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
+  // monthlyTransactions: Transaction[]
+  // setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>
   currentDay: string,
   setCurrentDay: React.Dispatch<React.SetStateAction<string>>
   today: string,
+  onDateClick: (dateInfo: DateClickArg) => void,
 }
 
-const Calender = ({ monthlyTransactions, setCurrentMonth, currentDay, setCurrentDay, today }: CalenderProps) => {
-  const events = [
-    { title: 'Meeting', start: new Date() }
-  ]
+const Calender = ({
+  // monthlyTransactions,
+  // setCurrentMonth,
+  currentDay,
+  setCurrentDay,
+  today,
+  onDateClick
+}: CalenderProps
+) => {
+  const monthlyTransactions = useMonthlyTransactions();
+  const { setCurrentMonth } = useAppContext();
 
   const theme = useTheme();
 
@@ -71,9 +81,6 @@ const Calender = ({ monthlyTransactions, setCurrentMonth, currentDay, setCurrent
       setCurrentDay(today);
     };
   }
-  const handleDateClick = (dateInfo: DateClickArg) => {
-    setCurrentDay(dateInfo.dateStr);
-  }
   return (
     <FullCalendar
       locale={jaLocale}
@@ -82,7 +89,7 @@ const Calender = ({ monthlyTransactions, setCurrentMonth, currentDay, setCurrent
       events={[...calendarEvents, backgroundEvent]}
       eventContent={renderEventContent}
       datesSet={handleDatesSet}
-      dateClick={handleDateClick}
+      dateClick={onDateClick}
     />
   )
 }

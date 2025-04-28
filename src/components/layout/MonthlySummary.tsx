@@ -7,12 +7,16 @@ import React from 'react'
 import { Transaction } from '../../types';
 import { financeCalculations } from '../../utils/financeCalculation';
 import { formatCurrency } from '../../utils/formatting';
+import useMonthlyTransactions from '../../hooks/useMonthlyTransactions';
 
-interface MonthlySummaryProps {
-  monthlyTransactions: Transaction[]
-}
+// interface MonthlySummaryProps {
+//   monthlyTransactions: Transaction[]
+// }
 
-const MonthlySummary = ({ monthlyTransactions }: MonthlySummaryProps) => {
+const MonthlySummary = (
+  // { monthlyTransactions }: MonthlySummaryProps
+) => {
+  const monthlyTransactions = useMonthlyTransactions();
   const { income, expense, balance } = financeCalculations(monthlyTransactions)
   return (
     <Box>
