@@ -1,46 +1,108 @@
-# Getting Started with Create React App
+# 家計簿アプリケーション
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## プロジェクト概要
+このアプリケーションは、個人の家計管理を効率的に行うためのWebアプリケーションです。ReactとTypeScriptを使用して開発され、Firebaseをバックエンドとして利用しています。
 
-## Available Scripts
+## 主な機能
+- 収支の記録と管理
+- 月次レポートの表示
+- カレンダーによる支出の可視化
+- グラフによる支出分析
+- データの永続化（Firebase）
 
-In the project directory, you can run:
+## 使用技術
+### フロントエンド
+- **React**: 19.1.0
+- **TypeScript**: 4.9.5
+- **Material-UI**: 7.0.1
+  - モダンなUIコンポーネントの実装
+  - レスポンシブデザイン
+- **React Router**: 7.5.0
+  - シングルページアプリケーションのルーティング
+- **React Hook Form**: 7.56.0
+  - フォームのバリデーション
+- **Zod**: 3.24.3
+  - スキーマバリデーション
 
-### `npm start`
+### データ可視化
+- **Chart.js**: 4.4.9
+  - 支出分析のグラフ表示
+- **FullCalendar**: 6.1.17
+  - カレンダーによる支出の可視化
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### バックエンド
+- **Firebase**
+  - データの永続化
+  - リアルタイムデータベース
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### 開発ツール
+- **ESLint**
+- **Jest**
+- **React Testing Library**
+- **TypeScript**
 
-### `npm test`
+## アプリケーションの特徴
+1. **モダンなUI/UX**
+   - Material-UIを使用した直感的なインターフェース
+   - レスポンシブデザインによるマルチデバイス対応
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+2. **堅牢な型システム**
+   - TypeScriptによる型安全性の確保
+   - 開発時のエラー検出
 
-### `npm run build`
+3. **データ管理**
+   - Firebaseによる安全なデータ保存
+   - リアルタイムなデータ更新
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+4. **データ可視化**
+   - グラフによる支出分析
+   - カレンダーによる支出の時系列表示
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## 技術的な工夫点
+1. **コンポーネント設計**
+   - 再利用可能なコンポーネントの作成
+   - 適切な状態管理の実装
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+2. **パフォーマンス最適化**
+   - コンポーネントの最適化
+   - 効率的なデータフェッチング
 
-### `npm run eject`
+3. **セキュリティ**
+   - Firebaseのセキュリティルールの実装
+   - データのバリデーション
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## 今後の改善点
+1. ユーザー認証機能の追加
+2. カテゴリー別の支出分析の強化
+3. データのエクスポート機能
+4. モバイルアプリケーションの開発
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 開発環境のセットアップ
+1. リポジトリのクローン
+```bash
+git clone [リポジトリURL]
+cd ts-household-app
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+2. 依存関係のインストール
+```bash
+npm install
+```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+3. 開発サーバーの起動
+```bash
+npm start
+```
 
-## Learn More
+4. テストの実行
+```bash
+npm test
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+5. ビルド
+```bash
+npm run build
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## ライセンス
+このプロジェクトはMITライセンスの下で公開されています。
