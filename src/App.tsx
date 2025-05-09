@@ -3,7 +3,7 @@ import "./App.css";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import Report from "./pages/Report";
-import NoMatch from "./pages/NoMatch";
+import NoMatch from "./pages/Nomatch";
 import AppLayout from "./components/layout/AppLayout";
 import { theme } from "./theme/theme";
 import { ThemeProvider } from "@emotion/react";

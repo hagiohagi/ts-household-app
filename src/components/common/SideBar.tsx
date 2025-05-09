@@ -4,7 +4,8 @@ import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import HomeIcon from "@mui/icons-material/Home";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
-import { NavLink } from "react-router-dom";
+import Link from "next/link";
+import { useRouter } from "next/router";
 
 interface SidebarProps {
   drawerWidth: number;
@@ -15,7 +16,7 @@ interface SidebarProps {
 interface menuItem {
   text: string;
   path: string;
-  icon: React.ComponentType;
+  icon: React.ElementType;
 }
 
 const SideBar = ({
@@ -23,6 +24,7 @@ const SideBar = ({
   mobileOpen,
   handleDrawerToggle,
 }: SidebarProps) => {
+  const router = useRouter();
   const MenuItems: menuItem[] = [
     { text: "Home", path: "/", icon: HomeIcon },
     { text: "Report", path: "/report", icon: EqualizerIcon },
@@ -43,14 +45,13 @@ const SideBar = ({
       <Divider />
       <List>
         {MenuItems.map((item, index) => (
-          <NavLink key={item.text} to={item.path} style={({ isActive }) => {
-            return {
-              ...baseLinkStyle,
-              ...(isActive ? activeLinkStyle : {})
-            }
-          }}>
+          <Link key={item.text} href={item.path} style={baseLinkStyle}>
             <ListItem key={index} disablePadding>
-              <ListItemButton>
+              <ListItemButton
+                sx={{
+                  ...(router.pathname === item.path ? activeLinkStyle : {}),
+                }}
+              >
                 <ListItemIcon>
                   {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
                   <item.icon />
@@ -58,7 +59,7 @@ const SideBar = ({
                 <ListItemText primary={item.text} />
               </ListItemButton>
             </ListItem>
-          </NavLink>
+          </Link>
         ))}
       </List>
     </div>

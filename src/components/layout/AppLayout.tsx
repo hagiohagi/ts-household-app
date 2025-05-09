@@ -13,7 +13,6 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
-import { Outlet } from "react-router-dom";
 import SideBar from "../common/SideBar";
 import { useAppContext } from "../../context/AppContext";
 import { collection, getDocs } from "firebase/firestore";
@@ -23,8 +22,11 @@ import { isFireStoreError } from "../../utils/errorHandling";
 
 const drawerWidth = 240;
 
-export default function AppLayout() {
+interface AppLayoutProps {
+  children: React.ReactNode;
+}
 
+export default function AppLayout({ children }: AppLayoutProps) {
   const { setTransactions, setIsLoading } = useAppContext()
 
   // firestoreのデータを全て取得
@@ -109,7 +111,7 @@ export default function AppLayout() {
         }}
       >
         <Toolbar />
-        <Outlet />
+        {children}
       </Box>
     </Box>
   );
