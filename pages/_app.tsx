@@ -5,6 +5,7 @@ import { CssBaseline } from '@mui/material';
 import { theme } from '../src/theme/theme';
 import { AppContextProvider } from '../src/context/AppContext';
 import '../src/index.css';
+import '../src/calendar.css';
 
 export default function App({ Component, pageProps }: AppProps) {
   return (

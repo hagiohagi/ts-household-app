@@ -2,7 +2,6 @@ import React from 'react'
 import FullCalendar from '@fullcalendar/react'
 import dayGridPlugin from '@fullcalendar/daygrid'
 import jaLocale from '@fullcalendar/core/locales/ja'
-import "../../calendar.css"
 import { DatesSetArg, EventContentArg } from '@fullcalendar/core'
 import { calculateDailyBalances } from '../../utils/financeCalculation'
 import { Balance, CalendarContent, Transaction } from '../../types'

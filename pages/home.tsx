@@ -11,23 +11,7 @@ import { DateClickArg } from "@fullcalendar/interaction";
 import useMonthlyTransactions from "../src/hooks/useMonthlyTransactions";
 import { useAppContext } from "../src/context/AppContext";
 
-// interface HomeProps {
-//   monthlyTransactions: Transaction[],
-//   setCurrentMonth: React.Dispatch<React.SetStateAction<Date>>,
-//   onSaveTransaction: (transaction: Schema) => Promise<void>,
-//   onDeleteTransaction: (transactionId: string | readonly string[]) => Promise<void>,
-//   onUpdateTransaction: (Transaction: Schema, transactionId: string) => Promise<void>
-// }
-
-const Home = (
-  // {
-  // monthlyTransactions,
-  // setCurrentMonth,
-  // onSaveTransaction,
-  // onDeleteTransaction,
-  // onUpdateTransaction
-  // }: HomeProps
-) => {
+const Home = () => {
   const { isMobile } = useAppContext();
   const monthlyTransactions = useMonthlyTransactions();
   const today = format(new Date(), "yyyy-MM-dd");
@@ -36,9 +20,6 @@ const Home = (
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
   const [isMobileDrawerOpen, setIsMobileDrawerOpen,] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-
-  // const theme = useTheme();
-  // const isMobile = useMediaQuery(theme.breakpoints.down("lg"))
 
   const dailyTransactions = useMemo(() => {
     return monthlyTransactions.filter((transaction) =>
@@ -90,11 +71,8 @@ const Home = (
       {/* 左側コンテンツ */}
       <Box sx={{ flexGrow: 1 }}>
         <MonthlySummary
-        // monthlyTransactions={monthlyTransactions} 
         />
         <Calender
-          // monthlyTransactions={monthlyTransactions}
-          // setCurrentMonth={setCurrentMonth}
           currentDay={currentDay}
           setCurrentDay={setCurrentDay}
           today={today}
@@ -108,7 +86,6 @@ const Home = (
           currentDay={currentDay}
           onAddTransactionForm={handleAddTransactionForm}
           onSelectTransaction={handleSelectTransaction}
-          // isMobile={isMobile}
           open={isMobileDrawerOpen}
           onClose={handleCloseMobileDrawer}
         />
@@ -116,12 +93,8 @@ const Home = (
           onCloseForm={closeForm}
           isEntryDrawerOpen={isEntryDrawerOpen}
           currentDay={currentDay}
-          // onSaveTransaction={onSaveTransaction}
           selectedTransaction={selectedTransaction}
           setSelectedTransaction={setSelectedTransaction}
-          // onDeleteTransaction={onDeleteTransaction}
-          // onUpdateTransaction={onUpdateTransaction}
-          // isMobile={isMobile}
           isDialogOpen={isDialogOpen}
           setIsDialogOpen={setIsDialogOpen}
         />
