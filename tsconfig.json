@@ -24,10 +24,25 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
   },
   "include": [
-    "src",
+    "pages/**/*.ts",
+    "pages/**/*.tsx",
+    "components/**/*.ts",
+    "components/**/*.tsx",
+    "hooks/**/*.ts",
+    "utils/**/*.ts",
+    "types/**/*.ts",
+    "context/**/*.ts",
+    "context/**/*.tsx",
+    "theme/**/*.ts",
+    "styles/**/*.css",
+    "firebase.ts",
     ".next/types/**/*.ts"
   ],
   "exclude": [

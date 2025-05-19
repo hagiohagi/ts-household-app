@@ -12,6 +12,13 @@ const nextConfig = {
     };
     return config;
   },
+  // 多言語対応設定（i18n）
+  i18n: {
+    locales: ['ja', 'en'],
+    defaultLocale: 'ja',
+    localeDetection: false,
+  },
+  output: 'standalone',
 };
 
 module.exports = nextConfig;

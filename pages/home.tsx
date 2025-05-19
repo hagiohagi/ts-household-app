@@ -1,15 +1,15 @@
 import { Box, useMediaQuery, useTheme } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import MonthlySummary from "../src/components/layout/MonthlySummary";
-import Calender from "../src/components/layout/Calender";
-import TransactionMenu from "../src/components/layout/TransactionMenu";
-import TransactionForm from "../src/components/layout/TransactionForm";
-import { Transaction } from "../src/types";
+import MonthlySummary from "@/components/layout/MonthlySummary";
+import Calender from "@/components/layout/Calender";
+import TransactionMenu from "@/components/layout/TransactionMenu";
+import TransactionForm from "@/components/layout/TransactionForm";
+import { Transaction } from "@/types";
 import { format } from "date-fns";
-import { Schema } from "../src/validations/schema";
+import { Schema } from "@/validations/schema";
 import { DateClickArg } from "@fullcalendar/interaction";
-import useMonthlyTransactions from "../src/hooks/useMonthlyTransactions";
-import { useAppContext } from "../src/context/AppContext";
+import useMonthlyTransactions from "@/hooks/useMonthlyTransactions";
+import { useAppContext } from "@/context/AppContext";
 
 const Home = () => {
   const { isMobile } = useAppContext();

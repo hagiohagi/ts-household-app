@@ -52,7 +52,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       }
     }
     fetchTransactions();
-  }, [])
+  }, [setIsLoading, setTransactions])
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);

@@ -98,10 +98,10 @@ const TransactionForm = ({
   useEffect(() => {
     const newCategories = currentType === "expense" ? expenseCategories : incomeCategories;
     setCategories(newCategories);
-  }, [currentType])
+  }, [currentType,expenseCategories,incomeCategories]);
   useEffect(() => {
     setValue("date", currentDay)
-  }, [currentDay]);
+  }, [currentDay, setValue]);
 
   const onSubmit: SubmitHandler<Schema> = (data) => {
     if (selectedTransaction) {
@@ -134,7 +134,7 @@ const TransactionForm = ({
       const categoryExists = categories.some((category) => category.label === selectedTransaction.category);
       setValue("category", categoryExists ? selectedTransaction.category : "");
     }
-  }, [selectedTransaction, categories])
+  }, [selectedTransaction, categories, setValue]);
   useEffect(() => {
     if (selectedTransaction) {
       setValue("type", selectedTransaction.type);
@@ -150,7 +150,7 @@ const TransactionForm = ({
         content: "",
       });
     }
-  }, [selectedTransaction])
+  }, [selectedTransaction, currentDay, reset, setValue]);
 
   const handleDelete = () => {
     if (selectedTransaction) {
