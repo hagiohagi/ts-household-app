@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { JSX, useContext, useEffect, useState } from "react";
+import React, { JSX, useContext, useEffect, useState, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
 import AlarmIcon from '@mui/icons-material/Alarm'
@@ -74,19 +74,20 @@ const TransactionForm = ({
   const { isMobile, onSaveTransaction, onDeleteTransaction, onUpdateTransaction } = useAppContext();
 
   const formWidth = 320;
-  const expenseCategories: CategoryItem[] = [
+  const expenseCategories = useMemo<CategoryItem[]>(() => [
     { label: "食費", icon: <FastfoodIcon fontSize='small' /> },
     { label: "日用品", icon: <AlarmIcon fontSize='small' /> },
     { label: "住居費", icon: <AddHomeIcon fontSize='small' /> },
     { label: "交際費", icon: <Diversity3Icon fontSize='small' /> },
     { label: "娯楽", icon: <SportsTennisIcon fontSize='small' /> },
     { label: "交通費", icon: <TrainIcon fontSize='small' /> },
-  ]
-  const incomeCategories: CategoryItem[] = [
+  ], []);
+
+  const incomeCategories = useMemo<CategoryItem[]>(() => [
     { label: "給与", icon: <WorkIcon fontSize='small' /> },
     { label: "副収入", icon: <AddBusinessIcon fontSize='small' /> },
     { label: "お小遣い", icon: <SavingsIcon fontSize='small' /> },
-  ]
+  ], []);
   //収支タイプを切り替える関数
   const incomeExpenseToggle = (type: incomeExpense) => {
     setValue("type", type);

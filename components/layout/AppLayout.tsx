@@ -19,6 +19,7 @@ import { collection, getDocs } from "firebase/firestore";
 import { Transaction } from "../../types";
 import { db } from "../../firebase";
 import { isFireStoreError } from "../../utils/errorHandling";
+import { useRouter } from "next/router";
 
 const drawerWidth = 240;
 
@@ -27,6 +28,7 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
+  const router = useRouter();
   const { setTransactions, setIsLoading } = useAppContext()
 
   // firestoreのデータを全て取得
@@ -52,7 +54,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
       }
     }
     fetchTransactions();
-  }, [setIsLoading, setTransactions])
+  }, [setIsLoading, setTransactions, router.pathname])
 
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
@@ -65,6 +67,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
   return (
     <Box
+      key={router.pathname}
       sx={{
         display: { md: "flex" },
         bgcolor: (theme) => theme.palette.grey[100],
