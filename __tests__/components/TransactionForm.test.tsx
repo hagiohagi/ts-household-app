@@ -48,9 +48,9 @@ describe('TransactionForm', () => {
     const categorySelect = screen.getByRole('combobox', { name: 'カテゴリ' })
     await userEvent.click(categorySelect)
     
-    expect(screen.getByText('給与')).toBeInTheDocument()
-    expect(screen.getByText('副収入')).toBeInTheDocument()
-    expect(screen.getByText('お小遣い')).toBeInTheDocument()
+    expect(screen.getByText('salary')).toBeInTheDocument()
+    expect(screen.getByText('side_income')).toBeInTheDocument()
+    expect(screen.getByText('pocket_money')).toBeInTheDocument()
   })
 
   it('閉じるボタンが正しく機能する', async () => {

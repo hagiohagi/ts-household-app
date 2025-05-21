@@ -49,4 +49,30 @@ describe('transactionSchema', () => {
     const result = transactionSchema.safeParse(negativeAmount)
     expect(result.success).toBe(false)
   })
+
+  it('内容が空文字列でないことを検証できる', () => {
+    const emptyContent = {
+      type: 'expense',
+      date: '2024-03-15',
+      amount: 1000,
+      category: '食費',
+      content: '', // 空文字列は無効
+    }
+
+    const result = transactionSchema.safeParse(emptyContent)
+    expect(result.success).toBe(false)
+  })
+
+  it('金額が数値であることを検証できる', () => {
+    const invalidAmount = {
+      type: 'expense',
+      date: '2024-03-15',
+      amount: '1000', // 文字列は無効
+      category: '食費',
+      content: 'テスト取引',
+    }
+
+    const result = transactionSchema.safeParse(invalidAmount)
+    expect(result.success).toBe(false)
+  })
 }) 
