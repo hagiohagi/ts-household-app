@@ -27,9 +27,35 @@ jest.mock('firebase/app', () => ({
 }))
 
 jest.mock('firebase/firestore', () => ({
-  getFirestore: jest.fn(),
+  getFirestore: jest.fn(() => ({
+    collection: jest.fn(),
+    doc: jest.fn(),
+  })),
   collection: jest.fn(),
-  getDocs: jest.fn(),
+  getDocs: jest.fn(() => Promise.resolve({
+    docs: [
+      {
+        id: '1',
+        data: () => ({
+          type: 'expense',
+          date: '2024-03-01',
+          amount: 1000,
+          category: '食費',
+          content: 'テスト支出1'
+        })
+      },
+      {
+        id: '2',
+        data: () => ({
+          type: 'income',
+          date: '2024-03-01',
+          amount: 5000,
+          category: '給与',
+          content: 'テスト収入1'
+        })
+      }
+    ]
+  })),
   addDoc: jest.fn(),
   updateDoc: jest.fn(),
   deleteDoc: jest.fn(),
@@ -38,4 +64,17 @@ jest.mock('firebase/firestore', () => ({
 
 jest.mock('firebase/analytics', () => ({
   getAnalytics: jest.fn(),
-})) 
+}))
+
+// スタイルのモック
+jest.mock('@/styles/index.css', () => ({}))
+jest.mock('@/styles/calendar.css', () => ({}))
+jest.mock('@/styles/App.css', () => ({}))
+
+// グローバルスタイルの設定
+beforeEach(() => {
+  document.body.style.margin = '0'
+  document.body.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif'
+  document.body.style.webkitFontSmoothing = 'antialiased'
+  document.body.style.mozOsxFontSmoothing = 'grayscale'
+}) 

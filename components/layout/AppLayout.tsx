@@ -28,7 +28,15 @@ export default function AppLayout({ children }: AppLayoutProps) {
   React.useEffect(() => {
     const fetchTransactions = async () => {
       try {
+        if (!db) {
+          console.error("Firebaseが初期化されていません");
+          return;
+        }
         const querySnapshot = await getDocs(collection(db, "Transactions"))
+        if (!querySnapshot) {
+          console.error("データの取得に失敗しました");
+          return;
+        }
         const transactionsData = querySnapshot.docs.map((doc) => {
           return {
             ...doc.data(),
