@@ -7,24 +7,6 @@ import { ThemeProvider } from '@mui/material/styles'
 import { theme } from '@/theme/theme'
 
 describe('CategoryChart', () => {
-  const mockTransactions: Transaction[] = [
-    {
-      id: '1',
-      type: 'expense',
-      date: '2024-03-01',
-      amount: 1000,
-      category: '食費',
-      content: 'テスト支出1',
-    },
-    {
-      id: '2',
-      type: 'expense',
-      date: '2024-03-01',
-      amount: 2000,
-      category: '交通費',
-      content: 'テスト支出2',
-    },
-  ]
 
   const renderWithContext = (component: React.ReactNode) => {
     return render(

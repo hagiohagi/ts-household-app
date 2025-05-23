@@ -66,6 +66,13 @@ jest.mock('firebase/analytics', () => ({
   getAnalytics: jest.fn(),
 }))
 
+// Material-UIのモック
+jest.mock('@mui/material', () => ({
+  ...jest.requireActual('@mui/material'),
+  useMediaQuery: jest.fn().mockReturnValue(false),
+  ThemeProvider: ({ children }) => children,
+}))
+
 // スタイルのモック
 jest.mock('@/styles/index.css', () => ({}))
 jest.mock('@/styles/calendar.css', () => ({}))
