@@ -69,7 +69,7 @@ jest.mock('firebase/analytics', () => ({
 // Material-UIのモック
 jest.mock('@mui/material', () => ({
   ...jest.requireActual('@mui/material'),
-  useMediaQuery: jest.fn().mockReturnValue(false),
+  useMediaQuery: jest.fn(() => false),
   ThemeProvider: ({ children }) => children,
 }))
 

@@ -58,8 +58,14 @@ describe('AppContext', () => {
 
   describe('初期状態のテスト', () => {
     it('初期値が正しく設定されている', () => {
-      renderWithContext(<TestComponent />)
-      
+      render(
+        <ThemeProvider theme={theme}>
+          <AppContextProvider>
+            <TestComponent />
+          </AppContextProvider>
+        </ThemeProvider>
+      )
+
       expect(screen.getByTestId('transactions-count')).toHaveTextContent('0')
       expect(screen.getByTestId('is-loading')).toHaveTextContent('true')
       expect(screen.getByTestId('is-mobile')).toHaveTextContent('false')
