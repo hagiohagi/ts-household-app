@@ -23,6 +23,7 @@ import IconComponents from './common/IconComponents';
 import { compareDesc, parseISO } from 'date-fns';
 import { useAppContext } from '../context/AppContext';
 import useMonthlyTransactions from '../hooks/useMonthlyTransactions';
+import CircularProgress from '@mui/material/CircularProgress';
 
 
 interface TransactionTableHeadProps {
@@ -116,7 +117,7 @@ interface FinancialItemProps {
 
 function FinancialItem({ title, value, color }: FinancialItemProps) {
   return (
-    <Grid size={{ xs: 4 }} textAlign={"center"}>
+    <Grid size={{ xs: 4 }} textAlign={"center"} data-testid="financial-item">
       <Typography
         variant="subtitle1"
         component={"div"}
@@ -152,6 +153,7 @@ export default function TransactionTable(
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isLoading, setIsLoading] = React.useState(false);
 
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -236,71 +238,81 @@ export default function TransactionTable(
         />
 
         {/* 取引一覧 */}
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={'medium'}
-          >
-            <TransactionTableHead
-              numSelected={selected.length}
-              onSelectAllClick={handleSelectAllClick}
-              rowCount={monthlyTransactions.length}
-            />
-            <TableBody>
-              {visibleRows.map((transaction: Transaction, index: number) => {
-                const isItemSelected = selected.includes(transaction.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+        <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          {isLoading ? (
+            <Box display="flex" justifyContent="center" p={3} id="loading-container">
+              <CircularProgress data-testid="circular-progress" />
+            </Box>
+          ) : monthlyTransactions.length > 0 ? (
+            <TableContainer>
+              <Table
+                sx={{ minWidth: 750 }}
+                aria-labelledby="tableTitle"
+                size={'medium'}
+              >
+                <TransactionTableHead
+                  numSelected={selected.length}
+                  onSelectAllClick={handleSelectAllClick}
+                  rowCount={monthlyTransactions.length}
+                />
+                <TableBody>
+                  {visibleRows.map((transaction: Transaction, index: number) => {
+                    const isItemSelected = selected.includes(transaction.id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, transaction.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={transaction.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: 'pointer' }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          'aria-labelledby': labelId,
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      id={labelId}
-                      scope="row"
-                      padding="none"
+                    return (
+                      <TableRow
+                        hover
+                        onClick={(event) => handleClick(event, transaction.id)}
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={transaction.id}
+                        selected={isItemSelected}
+                        sx={{ cursor: 'pointer' }}
+                      >
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              'aria-labelledby': labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {transaction.date}
+                        </TableCell>
+                        <TableCell align="left" sx={{ display: "flex", alignItems: "center" }}>
+                          {IconComponents[transaction.category]}
+                          {transaction.category}
+                        </TableCell>
+                        <TableCell align="left">{transaction.amount}</TableCell>
+                        <TableCell align="left">{transaction.content}</TableCell>
+                      </TableRow>
+                    );
+                  })}
+                  {emptyRows > 0 && (
+                    <TableRow
+                      style={{
+                        height: (53) * emptyRows,
+                      }}
                     >
-                      {transaction.date}
-                    </TableCell>
-                    <TableCell align="left" sx={{ display: "flex", alignItems: "center" }}>
-                      {IconComponents[transaction.category]}
-                      {transaction.category}
-                    </TableCell>
-                    <TableCell align="left">{transaction.amount}</TableCell>
-                    <TableCell align="left">{transaction.content}</TableCell>
-                  </TableRow>
-                );
-              })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                      <TableCell colSpan={6} />
+                    </TableRow>
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography data-testid="no-data-message">データがありません</Typography>
+          )}
+        </Box>
 
         {/* テーブル下部 */}
         <TablePagination

@@ -39,10 +39,7 @@ const BarChart = (
     maintainAspectRatio: false,
     responsive: true,
     plugins: {
-      // legend: {
-      //   position: 'top' as const,
-      // },
-      title: {
+        title: {
         display: true,
         text: '日別収支',
       },
