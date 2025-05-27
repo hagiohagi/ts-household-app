@@ -5,11 +5,6 @@
 /.pnp
 .pnp.js
 
-#firebase
-/firebase.ts
-# testing
-/coverage
-
 # next.js
 /.next/
 /out/
