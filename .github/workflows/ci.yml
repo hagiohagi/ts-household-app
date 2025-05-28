@@ -71,4 +71,4 @@ jobs:
       run: npm ci
     
     - name: Deploy to Vercel
-      run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm --org-id ${{ secrets.VERCEL_ORG_ID }} --project-id ${{ secrets.VERCEL_PROJECT_ID }}
+      run: npx vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }} --confirm --scope ${{ secrets.VERCEL_SCOPE }} --project-id ${{ secrets.VERCEL_PROJECT_ID }}
