@@ -76,5 +76,4 @@ jobs:
           --prod \
           --token "${{ secrets.VERCEL_TOKEN }}" \
           --confirm \
-          --scope "${{ secrets.VERCEL_SCOPE }}" \
-          --project-id "${{ secrets.VERCEL_PROJECT_ID }}"
+          --scope "${{ secrets.VERCEL_SCOPE }}"
