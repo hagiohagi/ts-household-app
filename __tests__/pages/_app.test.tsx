@@ -4,6 +4,13 @@ import { useAppContext } from '@/context/AppContext'
 import { useTheme } from '@mui/material'
 import userEvent from '@testing-library/user-event'
 
+// TransactionProviderのモック
+jest.mock('@/components/layout/TransactionProvider', () => {
+  return function MockTransactionProvider({ children }: { children: React.ReactNode }) {
+    return <>{children}</>
+  }
+})
+
 // AppContextProviderのテスト用モックコンポーネント
 const AppContextTestComponent = () => {
   const { isLoading, setIsLoading } = useAppContext()

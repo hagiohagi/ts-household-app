@@ -7,11 +7,6 @@ import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import SideBar from "../common/SideBar";
-import { useAppContext } from "../../context/AppContext";
-import { collection, getDocs } from "firebase/firestore";
-import { Transaction } from "../../types";
-import { db } from "../../firebase";
-import { isFireStoreError } from "../../utils/errorHandling";
 import { useRouter } from "next/router";
 
 const drawerWidth = 240;
@@ -22,41 +17,6 @@ interface AppLayoutProps {
 
 export default function AppLayout({ children }: AppLayoutProps) {
   const router = useRouter();
-  const { setTransactions, setIsLoading } = useAppContext()
-
-  // firestoreのデータを全て取得
-  React.useEffect(() => {
-    const fetchTransactions = async () => {
-      try {
-        if (!db) {
-          console.error("Firebaseが初期化されていません");
-          return;
-        }
-        const querySnapshot = await getDocs(collection(db, "Transactions"))
-        if (!querySnapshot) {
-          console.error("データの取得に失敗しました");
-          return;
-        }
-        const transactionsData = querySnapshot.docs.map((doc) => {
-          return {
-            ...doc.data(),
-            id: doc.id,
-          } as Transaction
-        })
-        setTransactions(transactionsData);
-      } catch (err) {
-        if (isFireStoreError(err)) {
-          console.error("FireStoreのエラーは:", err)
-        } else {
-          console.error("一般的なエラーは:", err)
-        }
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    fetchTransactions();
-  }, [setIsLoading, setTransactions, router.pathname])
-
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 

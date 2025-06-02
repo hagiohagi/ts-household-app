@@ -1,9 +1,16 @@
-import React from 'react'
+import { GetStaticProps } from 'next';
+import { Box, Typography } from '@mui/material';
 
-const NoMatch = () => {
+export const getStaticProps: GetStaticProps = async () => {
+  return {
+    props: {},
+  };
+};
+
+export default function Custom404() {
   return (
-    <div>このページはありません</div>
-  )
+    <Box sx={{ textAlign: 'center', mt: 4 }}>
+      <Typography variant="h4">404 - ページが見つかりません</Typography>
+    </Box>
+  );
 }
-
-export default NoMatch

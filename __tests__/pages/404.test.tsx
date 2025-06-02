@@ -12,6 +12,6 @@ describe('404 Page', () => {
     )
     
     // 404メッセージの確認
-    expect(screen.getByText('このページはありません')).toBeInTheDocument()
+    expect(screen.getByText('404 - ページが見つかりません')).toBeInTheDocument()
   })
 }) 
