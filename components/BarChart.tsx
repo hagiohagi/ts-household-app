@@ -12,7 +12,6 @@ import {
 import CircularProgress from '@mui/material/CircularProgress';
 import { Bar } from 'react-chartjs-2';
 import { calculateDailyBalances } from '../utils/financeCalculation';
-import { Transaction } from '../types';
 import { Box, Typography, useTheme } from '@mui/material';
 import { useAppContext } from '../context/AppContext';
 import useMonthlyTransactions from '../hooks/useMonthlyTransactions';

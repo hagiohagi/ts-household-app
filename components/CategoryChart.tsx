@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData } from 'chart.js';
 import { Pie } from 'react-chartjs-2';
-import { Box, CircularProgress, Menu, MenuItem, TextField, Typography, useTheme } from '@mui/material';
-import { ExpenseCategory, IncomeCategory, Transaction, TransactionType } from '../types';
+import { Box, CircularProgress, MenuItem, TextField, Typography, useTheme } from '@mui/material';
+import { ExpenseCategory, IncomeCategory, TransactionType } from '../types';
 import { useAppContext } from '../context/AppContext';
 import useMonthlyTransactions from '../hooks/useMonthlyTransactions';
 

@@ -4,7 +4,6 @@ import MonthSelector from "@/components/MonthSelector";
 import CategoryChart from "@/components/CategoryChart";
 import BarChart from "@/components/BarChart";
 import TransactionTable from "@/components/TransactionTable";
-import { Transaction } from "@/types";
 import AppLayout from '@/components/layout/AppLayout';
 
 const Report = () => {

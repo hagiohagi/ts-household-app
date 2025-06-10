@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useAppContext } from '../context/AppContext';
 import { formatMonth } from '../utils/formatting';
 import { Transaction } from '../types';
@@ -12,4 +12,4 @@ const useMonthlyTransactions = (): Transaction[] => {
   return monthlyTransactions;
 }
 
-export default useMonthlyTransactions
+export default useMonthlyTransactions;

@@ -7,13 +7,20 @@ import { AppContextProvider } from '@/context/AppContext';
 import '@/styles/index.css';
 import '@/styles/calendar.css';
 import TransactionProvider from '@/components/layout/TransactionProvider';
+import { Transaction } from '@/types';
 
-export default function App({ Component, pageProps }: AppProps) {
+interface CustomAppProps extends AppProps {
+  pageProps: {
+    initialTransactions: Transaction[];
+  };
+}
+
+export default function App({ Component, pageProps }: CustomAppProps) {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AppContextProvider>
-        <TransactionProvider>
+        <TransactionProvider initialTransactions={pageProps.initialTransactions}>
           <Component {...pageProps} />
         </TransactionProvider>
       </AppContextProvider>

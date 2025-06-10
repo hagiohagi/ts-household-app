@@ -11,7 +11,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import React, { JSX, useContext, useEffect, useState, useMemo } from "react";
+import React, { JSX, useEffect, useState, useMemo } from "react";
 import CloseIcon from "@mui/icons-material/Close"; // 閉じるボタン用のアイコン
 import FastfoodIcon from "@mui/icons-material/Fastfood"; //食事アイコン
 import AlarmIcon from '@mui/icons-material/Alarm'
@@ -26,7 +26,7 @@ import { Controller, SubmitHandler, useForm } from "react-hook-form";
 import { ExpenseCategory, IncomeCategory, Transaction } from "../../types";
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Schema, transactionSchema } from "../../validations/schema";
-import { AppContext, useAppContext } from "../../context/AppContext";
+import { useAppContext } from "../../context/AppContext";
 
 interface TransactionFormProps {
   onCloseForm: () => void;

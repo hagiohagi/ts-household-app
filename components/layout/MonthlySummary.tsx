@@ -4,7 +4,6 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import React from 'react'
-import { Transaction } from '../../types';
 import { financeCalculations } from '../../utils/financeCalculation';
 import { formatCurrency } from '../../utils/formatting';
 import useMonthlyTransactions from '../../hooks/useMonthlyTransactions';
