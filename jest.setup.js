@@ -1,21 +1,21 @@
 import '@testing-library/jest-dom'
 
-// Mock for next/router
-jest.mock('next/router', () => ({
-  useRouter() {
-    return {
-      route: '/',
-      pathname: '/',
-      query: {},
-      asPath: '/',
-      push: jest.fn(),
-      replace: jest.fn(),
-    }
-  },
+// Mock for next/navigation (App Router)
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
+  useRouter: jest.fn(() => ({
+    push: jest.fn(),
+    replace: jest.fn(),
+    back: jest.fn(),
+    prefetch: jest.fn(),
+  })),
+  useSearchParams: jest.fn(() => new URLSearchParams()),
 }))
 
 // Mock for Firebase
 jest.mock('firebase/app', () => ({
+  getApps: jest.fn(() => []),
+  getApp: jest.fn(),
   initializeApp: jest.fn(() => ({
     projectId: 'test-project',
     appId: 'test-app-id',
@@ -70,18 +70,8 @@ jest.mock('firebase/analytics', () => ({
 jest.mock('@mui/material', () => ({
   ...jest.requireActual('@mui/material'),
   useMediaQuery: jest.fn(() => false),
-  ThemeProvider: ({ children }) => children,
 }))
 
 // スタイルのモック
 jest.mock('@/styles/index.css', () => ({}))
 jest.mock('@/styles/calendar.css', () => ({}))
-jest.mock('@/styles/App.css', () => ({}))
-
-// グローバルスタイルの設定
-beforeEach(() => {
-  document.body.style.margin = '0'
-  document.body.style.fontFamily = '-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif'
-  document.body.style.webkitFontSmoothing = 'antialiased'
-  document.body.style.mozOsxFontSmoothing = 'grayscale'
-}) 

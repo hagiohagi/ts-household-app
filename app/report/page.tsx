@@ -1,18 +1,17 @@
 import { Grid, Paper } from "@mui/material";
-import React from "react";
 import MonthSelector from "@/components/MonthSelector";
 import CategoryChart from "@/components/CategoryChart";
 import BarChart from "@/components/BarChart";
 import TransactionTable from "@/components/TransactionTable";
-import AppLayout from '@/components/layout/AppLayout';
 
-const Report = () => {
-  const commonPaperStyle = {
-    height: "400px",
-    display: "flex",
-    flexDirection: "column",
-    p: 2,
-  }
+const commonPaperStyle = {
+  height: "400px",
+  display: "flex",
+  flexDirection: "column",
+  p: 2,
+} as const;
+
+export default function ReportPage() {
   return (
     <Grid container spacing={2}>
       <Grid size={{ xs: 12 }}>
@@ -33,13 +32,5 @@ const Report = () => {
         <TransactionTable />
       </Grid>
     </Grid>
-  )
-};
-
-export default function ReportPage() {
-  return (
-    <AppLayout>
-      <Report />
-    </AppLayout>
   );
 }

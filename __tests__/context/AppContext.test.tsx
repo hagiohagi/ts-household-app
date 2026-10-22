@@ -1,4 +1,4 @@
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, renderHook, screen, waitFor } from '@testing-library/react'
 import { AppContextProvider, useAppContext } from '@/context/AppContext'
 import { addDoc,  deleteDoc, updateDoc } from 'firebase/firestore'
 import { ThemeProvider } from '@mui/material'
@@ -29,16 +29,6 @@ const TransactionTestComponent = ({ onAction }: { onAction: (context: ReturnType
       <button onClick={() => onAction(context)}>Execute Action</button>
     </div>
   )
-}
-
-// コンテキストなしのテスト用コンポーネント
-const NoContextComponent = () => {
-  try {
-    useAppContext()
-    return <div>Context exists</div>
-  } catch (error) {
-    return <div>No context</div>
-  }
 }
 
 const renderWithContext = (component: React.ReactNode) => {
@@ -254,8 +244,9 @@ describe('AppContext', () => {
 
   describe('カスタムフックのテスト', () => {
     it('コンテキストが存在しない場合にエラーを投げる', () => {
-      render(<NoContextComponent />)
-      expect(screen.getByText('No context')).toBeInTheDocument()
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+      expect(() => renderHook(() => useAppContext())).toThrow('グローバルなデータはプロバーダーの中で取得してください')
+      consoleErrorSpy.mockRestore()
     })
   })
 

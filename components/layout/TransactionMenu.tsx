@@ -1,3 +1,5 @@
+"use client";
+
 import {
   Box,
   Button,
@@ -71,7 +73,7 @@ const TransactionMenu = ({
       }}
     >
       <Stack sx={{ height: "100%" }} spacing={2}>
-        <Typography fontWeight={"fontWeightBold"}>日時： {currentDay}</Typography>
+        <Typography sx={{ fontWeight: "fontWeightBold" }}>日時： {currentDay}</Typography>
         <DailySummary dailyTransactions={dailyTransactions} columns={isMobile ? 3 : 2} />
         {/* 内訳タイトル&内訳追加ボタン */}
         <Box
@@ -83,7 +85,7 @@ const TransactionMenu = ({
           }}
         >
           {/* 左側のメモアイコンとテキスト */}
-          <Box display="flex" alignItems="center">
+          <Box sx={{ display: "flex", alignItems: "center" }}>
             <NotesIcon sx={{ mr: 1 }} />
             <Typography variant="body1">内訳</Typography>
           </Box>
@@ -109,8 +111,8 @@ const TransactionMenu = ({
                         <Grid
                           container
                           spacing={1}
-                          alignItems="center"
                           wrap="wrap"
+                          sx={{ alignItems: "center" }}
                         >
                           <Grid size={{ xs: 1 }}>
                             {/* icon */}
@@ -119,8 +121,8 @@ const TransactionMenu = ({
                           <Grid size={{ xs: 2.5 }}>
                             <Typography
                               variant="caption"
-                              display="block"
                               gutterBottom
+                              sx={{ display: "block" }}
                             >
                               {transaction.category}
                             </Typography>
@@ -133,9 +135,9 @@ const TransactionMenu = ({
                           <Grid size={{ xs: 4.5 }}>
                             <Typography
                               gutterBottom
-                              textAlign={"right"}
-                              color="text.secondary"
                               sx={{
+                                textAlign: "right",
+                                color: "text.secondary",
                                 wordBreak: "break-all",
                               }}
                             >

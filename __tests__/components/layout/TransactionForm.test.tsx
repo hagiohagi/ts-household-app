@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react'
 import TransactionForm from '@/components/layout/TransactionForm'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import { ThemeProvider } from '@mui/material/styles'
 import { AppContext } from '@/context/AppContext'
 import { Transaction } from '@/types'
 import { theme } from '@/theme/theme' 

@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from 'react';
 import { alpha, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -46,8 +48,10 @@ function TransactionTableHead(props: TransactionTableHeadProps) {
             indeterminate={numSelected > 0 && numSelected < rowCount}
             checked={rowCount > 0 && numSelected === rowCount}
             onChange={onSelectAllClick}
-            inputProps={{
-              'aria-label': 'select all desserts',
+            slotProps={{
+              input: {
+                'aria-label': 'すべて選択',
+              },
             }}
           />
         </TableCell>
@@ -117,7 +121,7 @@ interface FinancialItemProps {
 
 function FinancialItem({ title, value, color }: FinancialItemProps) {
   return (
-    <Grid size={{ xs: 4 }} textAlign={"center"} data-testid="financial-item">
+    <Grid size={{ xs: 4 }} sx={{ textAlign: "center" }} data-testid="financial-item">
       <Typography
         variant="subtitle1"
         component={"div"}
@@ -126,15 +130,15 @@ function FinancialItem({ title, value, color }: FinancialItemProps) {
       </Typography>
       <Typography
         component={"span"}
-        fontWeight={"fontWeightBold"}
         sx={{
+          fontWeight: "fontWeightBold",
           color: color,
           fontSize: { xs: ".8rem", sm: "1rem", md: "1.2rem" },
           wordBreak: "break-word",
         }}>
         ¥{formatCurrency(value)}
       </Typography>
-    </Grid >
+    </Grid>
   )
 }
 
@@ -147,14 +151,12 @@ function FinancialItem({ title, value, color }: FinancialItemProps) {
 export default function TransactionTable(
   // { monthlyTransactions, onDeleteTransaction }: TransactionTableProps
 ) {
-  const { onDeleteTransaction } = useAppContext();
+  const { onDeleteTransaction, isLoading } = useAppContext();
   const monthlyTransactions = useMonthlyTransactions();
   const theme = useTheme();
   const [selected, setSelected] = React.useState<readonly string[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [isLoading, setIsLoading] = React.useState(false);
-
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
@@ -225,7 +227,7 @@ export default function TransactionTable(
             color={theme.palette.expenseColor.main}
           />
           <FinancialItem
-            title={"収入"}
+            title={"残高"}
             value={balance}
             color={theme.palette.balanceColor.main}
           />
@@ -240,7 +242,7 @@ export default function TransactionTable(
         {/* 取引一覧 */}
         <Box sx={{ flexGrow: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
           {isLoading ? (
-            <Box display="flex" justifyContent="center" p={3} id="loading-container">
+            <Box sx={{ display: "flex", justifyContent: "center", p: 3 }} id="loading-container">
               <CircularProgress data-testid="circular-progress" />
             </Box>
           ) : monthlyTransactions.length > 0 ? (
@@ -275,8 +277,10 @@ export default function TransactionTable(
                           <Checkbox
                             color="primary"
                             checked={isItemSelected}
-                            inputProps={{
-                              'aria-labelledby': labelId,
+                            slotProps={{
+                              input: {
+                                'aria-labelledby': labelId,
+                              },
                             }}
                           />
                         </TableCell>

@@ -1,3 +1,5 @@
+"use client";
+
 import { Box, Button } from '@mui/material'
 import React from 'react'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'

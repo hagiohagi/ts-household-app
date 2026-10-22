@@ -1,4 +1,4 @@
-const nextJest = require('next/jest')
+import nextJest from 'next/jest.js'
 
 const createJestConfig = nextJest({
   // next.config.jsと.envファイルを読み込むために、Next.jsアプリケーションのパスを指定
@@ -27,4 +27,4 @@ const customJestConfig = {
   },
 }
 
-module.exports = createJestConfig(customJestConfig) 
+export default createJestConfig(customJestConfig) 

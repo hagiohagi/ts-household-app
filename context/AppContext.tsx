@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, ReactNode, useContext, useState } from "react";
 import { Transaction } from "../types";
 import { useMediaQuery, useTheme } from "@mui/material";
@@ -46,12 +48,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
   const onDeleteTransaction = async (transactionIds: string | readonly string[]) => {
     //fireStoreのデータ削除
     try {
-      const idsToDelete = Array.isArray(transactionIds) ? transactionIds : [transactionIds];
-      for (const id of idsToDelete) {
-        await deleteDoc(doc(db, "Transactions", id));
-        const filteredTransaction = transactions.filter((transaction) => !idsToDelete.includes(transaction.id));
-        setTransactions(filteredTransaction);
-      }
+      const idsToDelete: readonly string[] = typeof transactionIds === "string" ? [transactionIds] : transactionIds;
+      await Promise.all(idsToDelete.map((id) => deleteDoc(doc(db, "Transactions", id))));
+      setTransactions((prev) => prev.filter((transaction) => !idsToDelete.includes(transaction.id)));
     } catch (err) {
       if (isFireStoreError(err)) {
         console.error("FireStoreのエラーは:", err)
@@ -66,8 +65,9 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       const docRef = doc(db, "Transactions", transactionIds);
       await updateDoc(docRef, transaction);
       //画面更新
-      const updatedTransactions = transactions.map((t) => t.id === transactionIds ? { ...t, ...transaction } : t) as Transaction[]
-      setTransactions(updatedTransactions);
+      setTransactions((prev) =>
+        prev.map((t) => t.id === transactionIds ? { ...t, ...transaction } : t) as Transaction[]
+      );
     } catch (err) {
       if (isFireStoreError(err)) {
         console.error("FireStoreのエラーは:", err)
@@ -76,7 +76,6 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       }
     }
   }
-
 
   return (
     <AppContext.Provider value={{
@@ -92,7 +91,7 @@ export const AppContextProvider = ({ children }: { children: ReactNode }) => {
       onUpdateTransaction
     }}>
       {children}
-    </AppContext.Provider >
+    </AppContext.Provider>
   )
 }
 

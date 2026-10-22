@@ -1,13 +1,13 @@
+"use client";
+
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
-import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import SideBar from "../common/SideBar";
-import { useRouter } from "next/router";
 
 const drawerWidth = 240;
 
@@ -16,26 +16,20 @@ interface AppLayoutProps {
 }
 
 export default function AppLayout({ children }: AppLayoutProps) {
-  const router = useRouter();
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [isClosing, setIsClosing] = React.useState(false);
 
   const handleDrawerToggle = () => {
-    if (!isClosing) {
-      setMobileOpen(!mobileOpen);
-    }
+    setMobileOpen(!mobileOpen);
   };
 
   return (
     <Box
-      key={router.pathname}
       sx={{
         display: { md: "flex" },
         bgcolor: (theme) => theme.palette.grey[100],
         minHeight: "100vh",
       }}
     >
-      <CssBaseline />
       {/* ヘッダー */}
       <AppBar
         position="fixed"

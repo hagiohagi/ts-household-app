@@ -1,4 +1,4 @@
-import { Box, Card, CardContent, Grid, Typography } from "@mui/material";
+import { Box, Card, CardContent, Grid, Theme, Typography } from "@mui/material";
 import React from "react";
 import { Transaction } from "../../types";
 import { financeCalculations } from "../../utils/financeCalculation";
@@ -12,75 +12,37 @@ interface DailySummaryProps {
 const DailySummary = ({ dailyTransactions, columns }: DailySummaryProps) => {
   const { income, expense, balance } = financeCalculations(dailyTransactions);
   const isThreeColumnsLayout = columns === 3;
+  const items = [
+    { title: "収入", value: income, xs: isThreeColumnsLayout ? 4 : 6, color: (theme: Theme) => theme.palette.incomeColor.main },
+    { title: "支出", value: expense, xs: isThreeColumnsLayout ? 4 : 6, color: (theme: Theme) => theme.palette.expenseColor.main },
+    { title: "残高", value: balance, xs: isThreeColumnsLayout ? 4 : 12, color: (theme: Theme) => theme.palette.balanceColor.main },
+  ];
   return (
     <Box>
       <Grid container spacing={2}>
-        {/* 収入 */}
-        <Grid size={{ xs: isThreeColumnsLayout ? 4 : 6 }} display={"flex"}>
-          <Card
-            sx={{ bgcolor: (theme) => theme.palette.grey[100], flexGrow: 1 }}
-          >
-            <CardContent>
-              <Typography variant="body2" noWrap textAlign="center">
-                収入
-              </Typography>
-              <Typography
-                textAlign="right"
-                fontWeight="fontWeightBold"
-                sx={{
-                  color: (theme) => theme.palette.incomeColor.main,
-                  wordBreak: "break-all"
-                }}
-              >
-                ¥{formatCurrency(income)}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        {/* 支出 */}
-        <Grid size={{ xs: isThreeColumnsLayout ? 4 : 6 }} display={"flex"}>
-          <Card
-            sx={{ bgcolor: (theme) => theme.palette.grey[100], flexGrow: 1 }}
-          >
-            <CardContent>
-              <Typography variant="body2" noWrap textAlign="center">
-                支出
-              </Typography>
-              <Typography
-                textAlign="right"
-                fontWeight="fontWeightBold"
-                sx={{
-                  color: (theme) => theme.palette.expenseColor.main,
-                  wordBreak: "break-all"
-                }}
-              >
-                ¥{formatCurrency(expense)}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-        {/* 残高 */}
-        <Grid size={{ xs: isThreeColumnsLayout ? 4 : 12 }} display={"flex"}>
-          <Card
-            sx={{ bgcolor: (theme) => theme.palette.grey[100], flexGrow: 1 }}
-          >
-            <CardContent>
-              <Typography variant="body2" noWrap textAlign="center">
-                残高
-              </Typography>
-              <Typography
-                textAlign="right"
-                fontWeight="fontWeightBold"
-                sx={{
-                  color: (theme) => theme.palette.balanceColor.main,
-                  wordBreak: "break-all"
-                }}
-              >
-                ¥{formatCurrency(balance)}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
+        {items.map(({ title, value, xs, color }) => (
+          <Grid key={title} size={{ xs }} sx={{ display: "flex" }}>
+            <Card
+              sx={{ bgcolor: (theme) => theme.palette.grey[100], flexGrow: 1 }}
+            >
+              <CardContent>
+                <Typography variant="body2" noWrap sx={{ textAlign: "center" }}>
+                  {title}
+                </Typography>
+                <Typography
+                  sx={{
+                    textAlign: "right",
+                    fontWeight: "fontWeightBold",
+                    color,
+                    wordBreak: "break-all"
+                  }}
+                >
+                  ¥{formatCurrency(value)}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+        ))}
       </Grid>
     </Box>
   );

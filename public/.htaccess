@@ -1,0 +1,3 @@
+# ロリポップ等のApacheサーバー向け設定（Vercelでは無視される）
+ErrorDocument 404 /404.html
+Options -Indexes

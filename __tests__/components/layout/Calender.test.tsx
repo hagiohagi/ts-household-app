@@ -3,7 +3,6 @@ import Calender from '@/components/layout/Calender'
 import { ThemeProvider } from '@mui/material/styles'
 import { AppContextProvider } from '@/context/AppContext'
 import { theme } from '@/theme/theme'
-import { Transaction } from '@/types'
 
 // テスト用のラッパーコンポーネント
 const renderWithTheme = (ui: React.ReactElement) => {
@@ -87,17 +86,6 @@ describe('Calender', () => {
 
   // 取引表示のテスト
   describe('取引表示', () => {
-    const mockTransactions: Transaction[] = [
-      {
-        id: '1',
-        type: 'expense',
-        date: '2024-03-01',
-        amount: 1000,
-        category: '食費',
-        content: 'テスト支出'
-      }
-    ]
-
     it('取引が正しく表示される', () => {
       renderWithTheme(
         <AppContextProvider>

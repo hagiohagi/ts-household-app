@@ -1,3 +1,5 @@
+"use client";
+
 import { Box } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import MonthlySummary from "@/components/layout/MonthlySummary";
@@ -9,16 +11,15 @@ import { format } from "date-fns";
 import { DateClickArg } from "@fullcalendar/interaction";
 import useMonthlyTransactions from "@/hooks/useMonthlyTransactions";
 import { useAppContext } from "@/context/AppContext";
-import AppLayout from "@/components/layout/AppLayout";
 
-const Index = () => {
+const Home = () => {
   const { isMobile } = useAppContext();
   const monthlyTransactions = useMonthlyTransactions();
   const today = format(new Date(), "yyyy-MM-dd");
   const [currentDay, setCurrentDay] = useState(today);
   const [isEntryDrawerOpen, setIsEntryDrawerOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-  const [isMobileDrawerOpen, setIsMobileDrawerOpen,] = useState(false);
+  const [isMobileDrawerOpen, setIsMobileDrawerOpen] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const dailyTransactions = useMemo(() => {
@@ -67,42 +68,39 @@ const Index = () => {
 
 
   return (
-    <AppLayout>
-      <Box sx={{ display: "flex" }}>
-        {/* 左側コンテンツ */}
-        <Box sx={{ flexGrow: 1 }}>
-          <MonthlySummary
-          />
-          <Calender
-            currentDay={currentDay}
-            setCurrentDay={setCurrentDay}
-            today={today}
-            onDateClick={handleDateClick}
-          />
-        </Box>
-        {/* 右側コンテンツ */}
-        <Box>
-          <TransactionMenu
-            dailyTransactions={dailyTransactions}
-            currentDay={currentDay}
-            onAddTransactionForm={handleAddTransactionForm}
-            onSelectTransaction={handleSelectTransaction}
-            open={isMobileDrawerOpen}
-            onClose={handleCloseMobileDrawer}
-          />
-          <TransactionForm
-            onCloseForm={closeForm}
-            isEntryDrawerOpen={isEntryDrawerOpen}
-            currentDay={currentDay}
-            selectedTransaction={selectedTransaction}
-            setSelectedTransaction={setSelectedTransaction}
-            isDialogOpen={isDialogOpen}
-            setIsDialogOpen={setIsDialogOpen}
-          />
-        </Box>
+    <Box sx={{ display: "flex" }}>
+      {/* 左側コンテンツ */}
+      <Box sx={{ flexGrow: 1 }}>
+        <MonthlySummary />
+        <Calender
+          currentDay={currentDay}
+          setCurrentDay={setCurrentDay}
+          today={today}
+          onDateClick={handleDateClick}
+        />
       </Box>
-    </AppLayout>
+      {/* 右側コンテンツ */}
+      <Box>
+        <TransactionMenu
+          dailyTransactions={dailyTransactions}
+          currentDay={currentDay}
+          onAddTransactionForm={handleAddTransactionForm}
+          onSelectTransaction={handleSelectTransaction}
+          open={isMobileDrawerOpen}
+          onClose={handleCloseMobileDrawer}
+        />
+        <TransactionForm
+          onCloseForm={closeForm}
+          isEntryDrawerOpen={isEntryDrawerOpen}
+          currentDay={currentDay}
+          selectedTransaction={selectedTransaction}
+          setSelectedTransaction={setSelectedTransaction}
+          isDialogOpen={isDialogOpen}
+          setIsDialogOpen={setIsDialogOpen}
+        />
+      </Box>
+    </Box>
   );
 };
 
-export default Index;
+export default Home;

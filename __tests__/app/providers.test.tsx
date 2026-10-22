@@ -1,5 +1,5 @@
-import { render, screen, waitFor } from '@testing-library/react'
-import App from '@/pages/_app'
+import { render, screen } from '@testing-library/react'
+import Providers from '@/app/providers'
 import { useAppContext } from '@/context/AppContext'
 import { useTheme } from '@mui/material'
 import userEvent from '@testing-library/user-event'
@@ -33,56 +33,33 @@ const ThemeTestComponent = () => {
   )
 }
 
-describe('_app.tsx', () => {
-  it('グローバルスタイルが適用される', async () => {
-    render(
-      <App
-        Component={() => <div>テストコンポーネント</div>}
-        pageProps={{}}
-        router={{} as any}
-      />
-    )
-
-    // グローバルスタイルの適用を待機
-    await waitFor(() => {
-      const body = document.body
-      expect(body.style.margin).toBe('0px')
-      expect(body.style.fontFamily).toBe('-apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif')
-      expect(body.style.getPropertyValue('webkit-font-smoothing')).toBe('antialiased')
-    }, { timeout: 15000 })
-  }, 20000)
-
+describe('Providers', () => {
   it('AppContextProviderが正しく機能する', async () => {
     render(
-      <App
-        Component={AppContextTestComponent}
-        pageProps={{}}
-        router={{} as any}
-      />
+      <Providers>
+        <AppContextTestComponent />
+      </Providers>
     )
 
     // 初期状態の確認
     expect(screen.getByTestId('loading-state')).toHaveTextContent('loading')
 
     // トグルボタンのクリック
-    const toggleButton = screen.getByRole('button', { name: 'Toggle Loading' })
-    await userEvent.click(toggleButton)
+    await userEvent.click(screen.getByRole('button', { name: 'Toggle Loading' }))
 
     // 状態が変更されたことを確認
     expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded')
   })
 
-  it('ThemeProviderが正しく機能する', async () => {
+  it('ThemeProviderが正しく機能する', () => {
     render(
-      <App
-        Component={ThemeTestComponent}
-        pageProps={{}}
-        router={{} as any}
-      />
+      <Providers>
+        <ThemeTestComponent />
+      </Providers>
     )
 
     // テーマの値が正しく適用されていることを確認
     expect(screen.getByTestId('income-color')).toHaveTextContent('#2196f3')
     expect(screen.getByTestId('expense-color')).toHaveTextContent('#f44336')
   })
-}) 
+})

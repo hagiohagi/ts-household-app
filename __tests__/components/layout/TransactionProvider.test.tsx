@@ -1,197 +1,91 @@
-import { render, screen, waitFor, act } from '@testing-library/react'
-import { ThemeProvider } from '@emotion/react'
+import { render, screen, waitFor } from '@testing-library/react'
+import { ThemeProvider } from '@mui/material/styles'
 import { theme } from '@/theme/theme'
-import { AppContextProvider } from '@/context/AppContext'
+import { AppContextProvider, useAppContext } from '@/context/AppContext'
 import TransactionProvider from '@/components/layout/TransactionProvider'
 import { getDocs } from 'firebase/firestore'
-import userEvent from '@testing-library/user-event'
-import { getServerSideProps } from '@/components/layout/TransactionProvider'
 
-// テスト用の共通コンポーネント
+// Contextの状態を表示するテスト用コンポーネント
 const TestComponent = () => {
+  const { transactions, isLoading } = useAppContext()
   return (
     <div>
       <div data-testid="test-component">TransactionProvider Test</div>
+      <div data-testid="loading-state">{isLoading ? 'loading' : 'loaded'}</div>
+      <ul>
+        {transactions.map((t) => (
+          <li key={t.id}>{t.content}</li>
+        ))}
+      </ul>
     </div>
   )
 }
 
-const renderWithProviders = (component: React.ReactNode) => {
-  return render(
-    <ThemeProvider theme={theme}>
-      <AppContextProvider>
-        <TransactionProvider initialTransactions={[]}>
-          {component}
-        </TransactionProvider>
-      </AppContextProvider>
-    </ThemeProvider>
-  )
-}
+const providers = (
+  <ThemeProvider theme={theme}>
+    <AppContextProvider>
+      <TransactionProvider>
+        <TestComponent />
+      </TransactionProvider>
+    </AppContextProvider>
+  </ThemeProvider>
+)
 
 describe('TransactionProvider', () => {
   beforeEach(() => {
     jest.clearAllMocks()
   })
 
-  describe('初期化のテスト', () => {
-    it('コンポーネントが正しくレンダリングされる', () => {
-      renderWithProviders(<TestComponent />)
-      expect(screen.getByTestId('test-component')).toBeInTheDocument()
-    })
-
-    it('初期トランザクションが正しく設定される', async () => {
-      const initialTransactions = [
-        {
-          id: '1',
-          type: 'expense' as const,
-          date: '2024-03-01',
-          amount: 1000,
-          category: '食費' as const,
-          content: 'テスト支出1'
-        }
-      ]
-
-      render(
-        <ThemeProvider theme={theme}>
-          <AppContextProvider>
-            <TransactionProvider initialTransactions={initialTransactions}>
-              <TestComponent />
-            </TransactionProvider>
-          </AppContextProvider>
-        </ThemeProvider>
-      )
-
-      await waitFor(() => {
-        expect(getDocs).toHaveBeenCalled()
-      })
-    })
+  it('子コンポーネントが正しくレンダリングされる', async () => {
+    render(providers)
+    expect(screen.getByTestId('test-component')).toBeInTheDocument()
+    await waitFor(() => expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded'))
   })
 
-  describe('データ取得のテスト', () => {
-    it('Firestoreからデータを正しく取得する', async () => {
-      await act(async () => {
-        renderWithProviders(<TestComponent />)
-      })
+  it('Firestoreから取得したデータをContextに設定する', async () => {
+    render(providers)
 
-      await waitFor(() => {
-        expect(getDocs).toHaveBeenCalled()
-      })
-    })
-
-    it('Firestoreのエラーを正しく処理する', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-      ;(getDocs as jest.Mock).mockRejectedValueOnce(new Error('Firestore error'))
-
-      await act(async () => {
-        renderWithProviders(<TestComponent />)
-      })
-
-      await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalled()
-      })
-
-      consoleErrorSpy.mockRestore()
-    })
+    expect(await screen.findByText('テスト支出1')).toBeInTheDocument()
+    expect(screen.getByText('テスト収入1')).toBeInTheDocument()
+    expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded')
+    expect(getDocs).toHaveBeenCalledTimes(1)
   })
 
-  describe('ルーティングのテスト', () => {
-    it('パス変更時にデータを再取得する', async () => {
-      const { rerender } = renderWithProviders(<TestComponent />)
+  it('再レンダリングしてもデータを再取得しない', async () => {
+    const { rerender } = render(providers)
+    await screen.findByText('テスト支出1')
 
-      await waitFor(() => {
-        expect(getDocs).toHaveBeenCalledTimes(1)
-      })
+    rerender(providers)
 
-      // パスを変更して再レンダリング
-      rerender(
-        <ThemeProvider theme={theme}>
-          <AppContextProvider>
-            <TransactionProvider initialTransactions={[]}>
-              <TestComponent />
-            </TransactionProvider>
-          </AppContextProvider>
-        </ThemeProvider>
-      )
-
-      await waitFor(() => {
-        expect(getDocs).toHaveBeenCalledTimes(2)
-      })
-    })
+    await waitFor(() => expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded'))
+    expect(getDocs).toHaveBeenCalledTimes(1)
   })
 
-  describe('エラーハンドリングのテスト', () => {
-    it('Firebaseが初期化されていない場合のエラーを処理する', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-      ;(getDocs as jest.Mock).mockRejectedValueOnce(new Error('Firebase not initialized'))
+  it('FireStoreのエラーを処理し、ローディングを終了する', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    ;(getDocs as jest.Mock).mockRejectedValueOnce({ code: 'permission-denied', message: 'denied' })
 
-      await act(async () => {
-        renderWithProviders(<TestComponent />)
-      })
+    render(providers)
 
-      await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          '一般的なエラーは:',
-          expect.any(Error)
-        )
-      })
-
-      consoleErrorSpy.mockRestore()
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith('FireStoreのエラーは:', expect.objectContaining({ code: 'permission-denied' }))
     })
+    expect(screen.getByTestId('loading-state')).toHaveTextContent('loaded')
+    expect(screen.queryByRole('listitem')).not.toBeInTheDocument()
 
-    it('データ取得失敗時のエラーを処理する', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
-      ;(getDocs as jest.Mock).mockResolvedValueOnce(null)
-
-      renderWithProviders(<TestComponent />)
-
-      await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith(
-          'データの取得に失敗しました'
-        )
-      })
-
-      consoleErrorSpy.mockRestore()
-    })
+    consoleErrorSpy.mockRestore()
   })
 
-  describe('SSRのテスト', () => {
-    it('getServerSidePropsが正しく動作する', async () => {
-      const result = await getServerSideProps({} as any)
-      
-      expect(result).toEqual({
-        props: {
-          initialTransactions: expect.arrayContaining([
-            expect.objectContaining({
-              id: '1',
-              type: 'expense',
-              date: '2024-03-01',
-              amount: 1000,
-              category: '食費',
-              content: 'テスト支出1'
-            }),
-            expect.objectContaining({
-              id: '2',
-              type: 'income',
-              date: '2024-03-01',
-              amount: 5000,
-              category: '給与',
-              content: 'テスト収入1'
-            })
-          ])
-        }
-      })
+  it('一般的なエラーを処理する', async () => {
+    const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation()
+    ;(getDocs as jest.Mock).mockRejectedValueOnce(new Error('network error'))
+
+    render(providers)
+
+    await waitFor(() => {
+      expect(consoleErrorSpy).toHaveBeenCalledWith('一般的なエラーは:', expect.any(Error))
     })
 
-    it('Firebaseが初期化されていない場合のエラー処理', async () => {
-      ;(getDocs as jest.Mock).mockRejectedValueOnce(new Error('Firebase not initialized'))
-      
-      const result = await getServerSideProps({} as any)
-      
-      expect(result).toEqual({
-        props: {
-          initialTransactions: []
-        }
-      })
-    })
+    consoleErrorSpy.mockRestore()
   })
 })

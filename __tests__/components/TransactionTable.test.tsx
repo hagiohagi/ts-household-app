@@ -74,4 +74,13 @@ describe('TransactionTable', () => {
     // 残高を確認（収入 - 支出）
     expect(within(balanceContainer).getByText('¥500')).toBeInTheDocument();
   });
+
+  it('収入、支出、残高の見出しが正しく表示される', () => {
+    renderWithTheme(<TransactionTable />);
+
+    const [incomeContainer, expenseContainer, balanceContainer] = screen.getAllByTestId('financial-item');
+    expect(within(incomeContainer).getByText('収入')).toBeInTheDocument();
+    expect(within(expenseContainer).getByText('支出')).toBeInTheDocument();
+    expect(within(balanceContainer).getByText('残高')).toBeInTheDocument();
+  });
 }); 

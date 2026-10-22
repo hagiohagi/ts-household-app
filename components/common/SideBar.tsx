@@ -1,9 +1,11 @@
+"use client";
+
 import { Box, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from "@mui/material";
 import React, { CSSProperties } from "react";
 import HomeIcon from "@mui/icons-material/Home";
 import EqualizerIcon from "@mui/icons-material/Equalizer";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 interface SidebarProps {
   drawerWidth: number;
@@ -22,7 +24,8 @@ const SideBar = ({
   mobileOpen,
   handleDrawerToggle,
 }: SidebarProps) => {
-  const router = useRouter();
+  // trailingSlash有効時は "/report/" になるため末尾のスラッシュを除いて比較する
+  const pathname = usePathname().replace(/(.)\/$/, "$1");
   const MenuItems: menuItem[] = [
     { text: "Home", path: "/", icon: HomeIcon },
     { text: "Report", path: "/report", icon: EqualizerIcon },
@@ -47,11 +50,10 @@ const SideBar = ({
             <ListItem key={index} disablePadding>
               <ListItemButton
                 sx={{
-                  ...(router.pathname === item.path ? activeLinkStyle : {}),
+                  ...(pathname === item.path ? activeLinkStyle : {}),
                 }}
               >
                 <ListItemIcon>
-                  {/* {index % 2 === 0 ? <InboxIcon /> : <MailIcon />} */}
                   <item.icon />
                 </ListItemIcon>
                 <ListItemText primary={item.text} />

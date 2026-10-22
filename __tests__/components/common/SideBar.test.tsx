@@ -1,19 +1,16 @@
-import { render, screen, fireEvent, within, waitFor } from '@testing-library/react'
+import { render, screen, fireEvent, within } from '@testing-library/react'
 import SideBar from '@/components/common/SideBar'
-import { useRouter } from 'next/router'
+import { usePathname } from 'next/navigation'
 import { ThemeProvider, createTheme } from '@mui/material/styles'
 
 // Next.jsのルーターをモック
-jest.mock('next/router', () => ({
-  useRouter: jest.fn(() => ({
-    pathname: '/',
-    push: jest.fn()
-  }))
+jest.mock('next/navigation', () => ({
+  usePathname: jest.fn(() => '/'),
 }))
 
 // Material-UIのアイコンをモック
-jest.mock('@mui/icons-material/Home', () => () => <div data-testid="HomeIcon" />)
-jest.mock('@mui/icons-material/Equalizer', () => () => <div data-testid="EqualizerIcon" />)
+jest.mock('@mui/icons-material/Home', () => function HomeIcon() { return <div data-testid="HomeIcon" /> })
+jest.mock('@mui/icons-material/Equalizer', () => function EqualizerIcon() { return <div data-testid="EqualizerIcon" /> })
 
 describe('SideBar', () => {
   // テスト用のデフォルトプロパティ
@@ -25,9 +22,7 @@ describe('SideBar', () => {
 
   // 各テスト前にルーターをモック
   beforeEach(() => {
-    (useRouter as jest.Mock).mockReturnValue({
-      pathname: '/'
-    })
+    (usePathname as jest.Mock).mockReturnValue('/')
     jest.clearAllMocks()
   })
 
@@ -83,9 +78,7 @@ describe('SideBar', () => {
   // アクティブ状態のテスト
   describe('アクティブ状態', () => {
     it('現在のパスに応じてメニュー項目がハイライトされる', () => {
-      (useRouter as jest.Mock).mockReturnValue({
-        pathname: '/report'
-      })
+      (usePathname as jest.Mock).mockReturnValue('/report/')
 
       renderWithTheme(<SideBar {...defaultProps} />)
       
@@ -98,9 +91,7 @@ describe('SideBar', () => {
     })
 
     it('非アクティブなメニュー項目はハイライトされない', () => {
-      (useRouter as jest.Mock).mockReturnValue({
-        pathname: '/report'
-      })
+      (usePathname as jest.Mock).mockReturnValue('/report/')
 
       renderWithTheme(<SideBar {...defaultProps} />)
       
@@ -126,26 +117,12 @@ describe('SideBar', () => {
       expect(handleDrawerToggle).toHaveBeenCalled()
     })
 
-    it('メニュー項目をクリックすると正しいパスに遷移する', () => {
-      const mockPush = jest.fn()
-      ;(useRouter as jest.Mock).mockReturnValue({
-        pathname: '/',
-        push: mockPush
-      })
-
+    it('メニュー項目が正しいパスへのリンクになっている', () => {
       renderWithTheme(<SideBar {...defaultProps} />)
-      
-      // PC用ドロワーの要素をクリック
+
       const permanentDrawer = screen.getByRole('navigation').querySelector('.MuiDrawer-docked') as HTMLElement
-      const reportLink = within(permanentDrawer).getByText('Report').closest('a')
-      
-      // クリックイベントを発火
-      fireEvent.click(reportLink!)
-      
-      setTimeout(() => {
-        expect(mockPush).toHaveBeenCalledWith('/report')
-      }
-      , 0)
+      expect(within(permanentDrawer).getByText('Home').closest('a')).toHaveAttribute('href', '/')
+      expect(within(permanentDrawer).getByText('Report').closest('a')).toHaveAttribute('href', '/report')
     })
   })
 }) 
